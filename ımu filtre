@@ -1,0 +1,19 @@
+// Basitleştirilmiş mantık
+void loop() {
+  unsigned long currentTime = micros();
+  float dt = (currentTime - previousTime) / 1000000.0;
+  previousTime = currentTime;
+
+  // 1. Sensörden ham verileri al
+  readIMU(); 
+
+  // 2. Jiroskop verisini entegre et (Açı = Açı + Hız * Zaman)
+  gyroAngleX += gyroX * dt;
+
+  // 3. İvmeölçer ile düzeltme yap (Filtreleme noktası)
+  // %96 Jiroskoba güven, %4 İvmeölçer ile hatayı düzelt
+  angleX = 0.96 * (angleX + gyroX * dt) + 0.04 * accAngleX;
+  angleY = 0.96 * (angleY + gyroY * dt) + 0.04 * accAngleY;
+
+  // Bu temizlenmiş açıları motorları kontrol etmek (PID) için kullanın
+}
